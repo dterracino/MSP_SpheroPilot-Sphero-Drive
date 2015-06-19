@@ -5,7 +5,6 @@ var keypress = require("keypress");
 
 // Port may change when we connect to it; be sure to check this before launching.
 var orb = sphero("COM4");
-var color = "darkred";
 
 orb.connect(listen);
 
@@ -18,53 +17,46 @@ function handle(ch, key) {
     }
 
     switch (key.name) {
+        
+        // Our "a" and "d" key will cycle through the colors for now.
+        // Going over the max number of colors will return you to the
+        // 0th color while going below the minimum number will bring
+        // you to the 31st color (thus a continuous cycle).
         case "a":
-            console.log("a key pressed");
-            
-            if (colorIndex > 0)
-            {
-                console.log("Subtracing one from colorIndex");
-                --colorIndex;
-            }
-                
-            else
-                colorIndex = 0;
-                
+            (colorIndex > 0) ? --colorIndex : colorIndex = 30;
             break;
       
         case "d":
-            console.log("d key pressed");
+            (colorIndex < 31) ? ++colorIndex : colorIndex = 0;
+            break;
             
-            if (colorIndex < 22)
-            {
-                console.log("Adding one to colorIndex");
-                ++colorIndex;
-            }
-                
-            else
-                colorIndex = 22;
-                
+        case "up":
+            roll(0);
+            break;
+            
+        case "right":
+            roll(90);
+            break;
+            
+        case "down":
+            roll(180);
             break;
       
         case "left":
             roll(270);
             break;
         
-        case "right":
-            roll(90);
-            break;
-        
         case "space":
             orb.roll.bind(orb, 0, 0);
     }
     
-    color = colorList[colorIndex];
-    console.log("Color changed to " + color);
+    // Log our current color to the console and change to that color.
+    console.log("Current color is " + colorList[colorIndex]);
+    orb.color(colorList[colorIndex]);
 }
 
 function listen() {
     keypress(process.stdin);
-    orb.color("aquamarine");
     process.stdin.on("keypress", handle);
 
     process.stdin.setRawMode(true);
