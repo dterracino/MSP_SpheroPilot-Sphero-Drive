@@ -6,6 +6,8 @@ var keypress = require("keypress");
 // Port may change when we connect to it; be sure to check this before launching.
 var orb = sphero("COM4");
 
+var gamepads = new Gamepads(gamepadConfig);
+
 orb.connect(listen);
 
 function handle(ch, key) {
@@ -56,12 +58,58 @@ function handle(ch, key) {
 }
 
 function listen() {
+    if (gamepads.gamepadsSupported) {
+        gamepads.updateStatus = function () {
+        gamepads.polling = true;
+        gamepads.update();
+        window.requestAnimationFrame(gamepads.updateStatus);
+        };
+    }
+    
     keypress(process.stdin);
     process.stdin.on("keypress", handle);
 
     process.stdin.setRawMode(true);
     process.stdin.resume();
 }
+
+var gamepadConfig = {
+  axisThreshold: 0,
+  indices: {
+    'standard': {
+      cursorX: 2,
+      cursorY: 3,
+      scrollX: 0,
+      scrollY: 1,
+      back: 9,
+      forward: 8,
+      vendor: 10,
+      zoomIn: 5,
+      zoomOut: 1
+    },
+    
+    '79-6-Generic   USB  Joystick': {
+      cursorX: null,
+      cursorY: null,
+      scrollX: 3,
+      scrollY: 2,
+      back: 6,
+      forward: 7,
+      vendor: null,
+      zoomIn: 9,
+      zoomOut: 8
+    },
+    keyEvents: {
+      vendor: {
+        detail: {
+          charCode: 0,
+          key: 'Escape',
+          keyCode: 27
+        }
+      }
+    }
+  }
+};
 
 var colorIndex = 0;
 var colorList = [
