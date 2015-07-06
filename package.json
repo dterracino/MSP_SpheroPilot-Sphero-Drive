@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Assassin0795/MSP_SpheroPilot-Sphero-Drive#readme",
   "dependencies": {
+    "gamepad-plus": "^1.0.12",
     "keypress": "^0.2.1",
     "sphero": "^0.3.0"
   }
